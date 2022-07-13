@@ -99,8 +99,8 @@ C  [liblwjgl_stb.dylib+0xf431]
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
 j  org.lwjgl.stb.STBImage.nstbi_load_from_memory(JI[I[I[II)J+0
 j  org.lwjgl.stb.STBImage.stbi_load_from_memory(Ljava/nio/ByteBuffer;[I[I[II)Ljava/nio/ByteBuffer;+34
-j  Engine.textures.Texture.loadFromFile(LEngine/util/CustomFile;I)LEngine/textures/Texture;+97
-j  Engine.Main.main([Ljava/lang/String;)V+298
+j  textures.Texture.loadFromFile(LEngine/util/CustomFile;I)LEngine/textures/Texture;+97
+j  Main.main([Ljava/lang/String;)V+298
 v  ~StubRoutines::call_stub
 
 ---------------  P R O C E S S  ---------------
@@ -480,7 +480,7 @@ Dynamic libraries:
 
 VM Arguments:
 jvm_args: -Xms1024m -Xmx3000m -Djava.awt.headless=true -Djava.library.path=/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives -Dfile.encoding=UTF-8 
-java_command: Engine.Main
+java_command: Main
 java_class_path (initial): /Users/huangyoulin/Documents/GitHub/LMEGE2.0/bin:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/joml-1.10.2.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl_util.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-glfw.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-glfw-javadoc.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-openal.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-openal-javadoc.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-opencl.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-opencl-javadoc.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-opengl.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-opengl-javadoc.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-stb.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/PNGDecoder.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/slick-util.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives/lwjgl-glfw-natives-macos.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives/lwjgl-natives-macos.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives/lwjgl-openal-natives-macos.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives/lwjgl-opengl-natives-macos.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives/lwjgl-stb-natives-macos.jar:/Users/huangyoulin/Documents/GitHub/commons-io-2.11.0/commons-io-2.11.0.jar
 Launcher Type: SUN_STANDARD
 

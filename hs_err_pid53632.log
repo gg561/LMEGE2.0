@@ -97,8 +97,8 @@ C  [GLEngine+0xaabdd]  glDrawElements_GL3Exec+0x2b8
 j  org.lwjgl.opengl.GL11C.nglDrawElements(IIIJ)V+0
 j  org.lwjgl.opengl.GL11C.glDrawElements(IIIJ)V+4
 j  org.lwjgl.opengl.GL11.glDrawElements(IIIJ)V+4
-j  Engine.ModelRenderer.render(LEngine/shaders/ShaderManager;)V+80
-j  Engine.Main.main([Ljava/lang/String;)V+935
+j  ModelRenderer.render(LEngine/shaders/ShaderManager;)V+80
+j  Main.main([Ljava/lang/String;)V+935
 v  ~StubRoutines::call_stub
 V  [libjvm.dylib+0x2d4795]
 V  [libjvm.dylib+0x30582b]
@@ -125,8 +125,8 @@ Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
 j  org.lwjgl.opengl.GL11C.nglDrawElements(IIIJ)V+0
 j  org.lwjgl.opengl.GL11C.glDrawElements(IIIJ)V+4
 j  org.lwjgl.opengl.GL11.glDrawElements(IIIJ)V+4
-j  Engine.ModelRenderer.render(LEngine/shaders/ShaderManager;)V+80
-j  Engine.Main.main([Ljava/lang/String;)V+935
+j  ModelRenderer.render(LEngine/shaders/ShaderManager;)V+80
+j  Main.main([Ljava/lang/String;)V+935
 v  ~StubRoutines::call_stub
 
 ---------------  P R O C E S S  ---------------
@@ -506,7 +506,7 @@ Dynamic libraries:
 
 VM Arguments:
 jvm_args: -Xms512m -Xmx3000m -Djava.awt.headless=true -Djava.library.path=/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives -Dfile.encoding=UTF-8 
-java_command: Engine.Main
+java_command: Main
 java_class_path (initial): /Users/huangyoulin/Documents/GitHub/LMEGE2.0/bin:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/joml-1.10.2.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl_util.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-glfw.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-glfw-javadoc.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-openal.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-openal-javadoc.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-opencl.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-opencl-javadoc.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-opengl.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-opengl-javadoc.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/lwjgl-stb.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/PNGDecoder.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/jars/slick-util.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives/lwjgl-glfw-natives-macos.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives/lwjgl-natives-macos.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives/lwjgl-openal-natives-macos.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives/lwjgl-opengl-natives-macos.jar:/Users/huangyoulin/Documents/GitHub/LMEGE2.0/lib/natives/lwjgl-stb-natives-macos.jar
 Launcher Type: SUN_STANDARD
 

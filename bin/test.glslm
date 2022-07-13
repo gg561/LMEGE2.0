@@ -1,0 +1,3 @@
+let uniform float test;
+
+test = 2;
