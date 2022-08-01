@@ -16,7 +16,10 @@ public class CustomFile {
 	private String path;
 	
 	public CustomFile(String path) {
-		this.path = PATH_SEPARATOR + path;
+		if(!path.startsWith("/"))
+			this.path = PATH_SEPARATOR + path;
+		else
+			this.path = path;
 		String[] paths = path.split(PATH_SEPARATOR);
 		name = paths[paths.length - 1];
 	}

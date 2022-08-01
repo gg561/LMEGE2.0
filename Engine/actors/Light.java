@@ -6,24 +6,30 @@ public class Light {
 	
 	private Vector3f color;
 	private Vector3f position;
-	private float strength;
+	private Vector3f attenuation;
 	
 	public Light() {
 		color = new Vector3f();
 		position = new Vector3f();
-		strength = 0;
+		attenuation = new Vector3f(1, 0, 0);
 	}
 	
 	public Light(Vector3f color, Vector3f position) {
 		this.color = color;
 		this.position = position;
+		attenuation = new Vector3f(1, 0, 0);
 	}
 	/*
 	 * effectiveness questionned
 	 */
 	public Light(Vector3f color, Vector3f position, float strength) {
 		this(color, position);
-		this.strength = strength;
+		attenuation = new Vector3f(1, strength, strength);
+	}
+	
+	public Light(Vector3f color, Vector3f position, Vector3f attenuation) {
+		this(color, position);
+		this.attenuation = attenuation;
 	}
 
 	public Vector3f getColor() {
@@ -42,12 +48,16 @@ public class Light {
 		this.position = position;
 	}
 
-	public float getStrength() {
-		return strength;
+	public Vector3f getAttenuation() {
+		return attenuation;
 	}
 
-	public void setStrength(float strength) {
-		this.strength = strength;
+	public void setAttenuation(float strength) {
+		this.attenuation = new Vector3f(1, strength, strength);
+	}
+	
+	public void setAttenuation(Vector3f attenuation) {
+		this.attenuation = attenuation;
 	}
 
 }

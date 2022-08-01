@@ -21,8 +21,8 @@ public abstract class Terrain implements Renderable {
 	
 	private static HashMap<HashMap<Integer, Integer>, Terrain> terrains = new HashMap<HashMap<Integer, Integer>, Terrain>();
 	
-	protected static final int SIZE = 800;
-	protected static final int VERTEX_COUNT = 128;
+	public static final int SIZE = 800;//remember to cast to float to use float division instead of int division
+	protected static final int VERTEX_COUNT = 256;
 	protected static final int TILES = 80;
 	
 	protected float[][]heights = new float[VERTEX_COUNT][VERTEX_COUNT];
@@ -81,7 +81,7 @@ public abstract class Terrain implements Renderable {
 	public float getHeightOfTerrain(float worldX, float worldZ) {
 		float terrainX = worldX - this.position.x;//translates world coordinate to terrain coordinate -> world pos - (terrain.x * SIZE);
 		float terrainZ = worldZ - this.position.y;
-		float gridSquareSize = SIZE / (heights.length - 1);
+		float gridSquareSize = ((float) SIZE) / (heights.length - 1);
 		int gridX = (int) Math.floor(terrainX / gridSquareSize);
 		int gridZ = (int) Math.floor(terrainZ / gridSquareSize);
 		if(gridX >= heights.length - 1 || gridZ >= heights.length - 1 || gridX < 0 || gridZ < 0) {

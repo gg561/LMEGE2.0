@@ -1,0 +1,7 @@
+enclosed
+-> transparency
+<mod>
+	if(textureColor.a < 0.5){
+		discard;
+	}
+</mod>

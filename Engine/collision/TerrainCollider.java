@@ -2,6 +2,7 @@ package collision;
 
 import org.joml.Vector3f;
 
+import actors.Movable;
 import terrain.Terrain;
 
 public class TerrainCollider extends Collider {
@@ -31,6 +32,12 @@ public class TerrainCollider extends Collider {
 	}
 
 	@Override
+	public void reactToCollision(Collider other) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public boolean contains(Vector3f location) {
 		if(location.y < binder.getHeightOfTerrain(location.x, location.z)) {
 			return true;
@@ -50,6 +57,38 @@ public class TerrainCollider extends Collider {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean contains(Movable movable) {
+		if(movable.getPosition().y < binder.getHeightOfTerrain(movable.getPosition().x, movable.getPosition().z)) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean containsExec(Movable movable) {
+		// TODO Auto-generated method stub this.collider.getPosition().y - this.collider.getBounds().y
+		float x = movable.getPosition().x, z = movable.getPosition().z, y = movable.getPosition().y - movable.getCollider().getBounds().y;
+		//System.out.println(x + " " + y + " " + z);
+		float height = binder.getHeightOfTerrain(x, z);
+		if(y <= height) {
+			movable.getCollider().collision.addCollider(this, new Vector3f(0, height - y, 0));
+			return true;
+		}else if(y < height + 1 && y > height) {
+			movable.getCollider().collision.addCollider(this, new Vector3f(0));
+			return true;
+		}
+		return false;
+	}
+	
+	public void clearCollision() {
+		collision.clearCollisions();
+	}
+	
+	public TerrainCollider clone() {
+		return new TerrainCollider(this.binder);
 	}
 
 }

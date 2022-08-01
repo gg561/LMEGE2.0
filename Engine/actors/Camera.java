@@ -12,10 +12,12 @@ public class Camera extends Movable{
 	public static float pitchLimit = 60;
 	
 	private Matrix4f projection;
+	private Matrix4f orthographic;
 	
 	public Camera() {
 		super();
 		this.projection = new Matrix4f();
+		this.orthographic = new Matrix4f();
 	}
 	
 	public Matrix4f getTransformation() {
@@ -33,11 +35,10 @@ public class Camera extends Movable{
 	
 	public void aim(Movable movable, long window) {
 		Exoskeleton.aim(this, aimSensitivity, window, new Vector4f((float)Math.toRadians(yawLimit + Math.toDegrees(movable.getRotation().y)), -(float)Math.toRadians(yawLimit - Math.toDegrees(movable.getRotation().y)), (float)Math.toRadians(pitchLimit + Math.toDegrees(movable.getRotation().x)), -(float)Math.toRadians(pitchLimit - Math.toDegrees(movable.getRotation().x))));
-		System.out.println(movable.getRotation().y);
 	}
 	
 	public void setOrthographic(float left, float right, float top, float bottom) {
-		projection.setOrtho2D(left, right, bottom, top);
+		orthographic.setOrtho2D(left, right, bottom, top);
 	}
 	
 	public void setPerspective(float fov, float aspectRatio, float zNear, float zFar) {
@@ -46,6 +47,10 @@ public class Camera extends Movable{
 
 	public Matrix4f getProjection() {
 		return projection;
+	}
+	
+	public Matrix4f getOrthograpic() {
+		return orthographic;
 	}
 
 }

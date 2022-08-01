@@ -1,0 +1,13 @@
+boolean waves;
+const float levels;
+
+enclosed
+/4
+{
+	modular;
+}
+/5
+{
+	gameTest;
+	noShadows;
+}

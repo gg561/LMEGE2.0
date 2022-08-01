@@ -11,6 +11,7 @@ public class Vbo {
 	
 	private final int id;
 	private final int type;
+	private FloatBuffer data;
 	
 	public Vbo() {
 		id = GL15.glGenBuffers();
@@ -40,6 +41,7 @@ public class Vbo {
 	public void storeData(float[] data) {
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
 		buffer.put(data);
+		this.data = buffer;
 		buffer.flip();
 		storeData(buffer);
 	}
@@ -60,6 +62,10 @@ public class Vbo {
 	
 	public void delete() {
 		GL30.glDeleteBuffers(id);
+	}
+	
+	public FloatBuffer getData() {
+		return data;
 	}
 
 }

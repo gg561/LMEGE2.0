@@ -1,0 +1,13 @@
+const float levels = 6;
+enclosed
+-> diffuseCel
+<mod>
+	float levelDiffuse = floor(levels * brightness);
+	brightness = levelDiffuse / levels;
+</mod>
+enclosed
+-> specularCel
+<mod>
+	float levelSpecular = floor(levels * dampedSpecular);
+	dampedSpecular = levelSpecular / levels;
+</mod>

@@ -28,6 +28,7 @@ public class Texture {
 	private float shineDamper = 1;
 	private boolean hasTransparency;
 	private CustomFile file;
+	private int rows = 1;
 	
 	public Texture() {
 		id = GL11.glGenTextures();
@@ -37,10 +38,7 @@ public class Texture {
 	}
 	
 	public Texture(CustomFile file, int size) {
-		this.id = loadFromFile(file, size).id;
-		this.scale = loadFromFile(file, size).scale;
-		this.file = file;
-		textures.add(this);
+		loadFromFile(file, size);
 	}
 	
 	public Texture(int id) {
@@ -91,6 +89,7 @@ public class Texture {
 			throw new RuntimeException("Null image");
 		}
 		Texture texture = new Texture();
+		texture.file = file;
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getId());
 		int width = x[0];
 		int height = y[0];
@@ -142,6 +141,22 @@ public class Texture {
 
 	public CustomFile getFile() {
 		return file;
+	}
+	
+	public int getRows() {
+		return rows;
+	}
+	
+	public void setRows(int rows) {
+		this.rows = rows;
+	}
+	
+	public Vector2f calculateOffset(int index) {
+		int column = index % rows;
+		float xOffset = ((float) column) / rows;
+		int row = index / rows;
+		float yOffset = ((float) row) / rows;
+		return new Vector2f(xOffset, yOffset);
 	}
 
 }

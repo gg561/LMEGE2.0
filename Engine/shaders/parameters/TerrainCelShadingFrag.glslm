@@ -1,0 +1,13 @@
+const float levels = 6;
+enclosed
+@57
+<mod>
+	float levelDiffuse = floor(levels * brightness);
+	brightness = levelDiffuse / levels;
+</mod>
+enclosed
+@50
+<mod>
+	float levelSpecular = floor(levels * dampedSpecular);
+	dampedSpecular = levelSpecular / levels;
+</mod>

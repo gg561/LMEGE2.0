@@ -1,25 +1,33 @@
 #version 400 core
 
+const int MAX_NUMBER_OF_LIGHTS = 4;
+
 layout (location = 0) in vec3 in_position;
 layout (location = 1) in vec2 in_texCoords;
 layout (location = 2) in vec3 in_normal;
 
 out vec3 color;
 out vec3 surfaceNormal;
-out vec3 lightDirection;
+out vec3 lightDirection[MAX_NUMBER_OF_LIGHTS];
 out vec2 textureCoords;
 out vec3 toCameraVec;
 out float visibility;
+out float numOfLights;
 
 uniform mat4 viewMatrix;
 uniform mat4 projMatrix;
 uniform mat4 modelMatrix;
-uniform vec3 lightPosition;
+uniform vec3 lightPosition[MAX_NUMBER_OF_LIGHTS];
 
 uniform float useFakeLighting;
 
 uniform float fogGradient;
 uniform float fogDensity;
+
+uniform vec2 textureAtlasOffset;
+uniform float textureAtlasRows;
+
+uniform float numberOfLights;
 
 void main(void){
 	
@@ -29,8 +37,11 @@ void main(void){
 	vec4 worldPosition = modelMatrix * vec4(in_position, 1.0);
 	vec4 positionRelativeCamera = viewMatrix * worldPosition;
 	gl_Position = projMatrix * positionRelativeCamera;
-	textureCoords = in_texCoords;
-	
+	float inRows = textureAtlasRows;
+	if(inRows < 1){
+		inRows = 1;
+	}
+	textureCoords = in_texCoords / inRows + textureAtlasOffset;
 	//FAKE LIGHTING
 	
 	vec3 normal = in_normal;
@@ -41,9 +52,11 @@ void main(void){
 	//LIGHTING
 	
 	surfaceNormal = (modelMatrix * vec4(normal, 0.0)).xyz;
-	lightDirection = lightPosition - worldPosition.xyz;
+	for(int i = 0; i < numberOfLights; i ++){
+		lightDirection[i] = lightPosition[i] - worldPosition.xyz;
+	}
 	toCameraVec = (inverse(viewMatrix) * vec4(0, 0, 0, 1)).xyz - worldPosition.xyz;
-	
+	numOfLights = numberOfLights;
 	//FOG
 	
 	float distance = length(positionRelativeCamera.xyz);

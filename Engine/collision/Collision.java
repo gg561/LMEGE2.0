@@ -35,11 +35,21 @@ public class Collision {
 	public Vector3f getCombinedDirection() {
 		Vector3f direction = new Vector3f();
 		for(Collider collider : collisions.keySet()) {
-			System.out.println("COLLIDER " + collisions.get(collider));
 			direction.add(collisions.get(collider));
 		}
-		System.out.println("DIR " + direction);
 		return direction;
+	}
+	
+	public void clearCollisions() {
+		collisions.clear();
+	}
+	
+	public void removeCollision(Collider collider) {
+		this.collisions.remove(collider);
+	}
+	
+	public String toString() {
+		return collisions.toString();
 	}
 
 }

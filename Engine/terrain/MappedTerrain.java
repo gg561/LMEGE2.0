@@ -36,7 +36,7 @@ public class MappedTerrain extends Terrain {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		int VERTEX_COUNT = image.getHeight();
+		final int VERTEX_COUNT = image.getHeight();
 		heights = new float[VERTEX_COUNT][VERTEX_COUNT];
 		int count = VERTEX_COUNT * VERTEX_COUNT;
 		float[] vertices = new float[count * 3];
@@ -79,10 +79,10 @@ public class MappedTerrain extends Terrain {
 	}
 	
 	private Vector3f calculateNormal(int x, int z, int maxHeight) {
-		int left = x - 1;
-		int right = x + 1;
-		int down = z - 1;
-		int up = z + 1;
+		int left = (x - 1) > 0 ? x - 1 : 0;
+		int right = (x + 1) < (heights.length - 1) ? x + 1 : 0;
+		int down = (z - 1) > 0 ? z - 1 : 0;
+		int up = (z + 1) < (heights.length - 1) ? z + 1 : 0;/*
 		if(x <= 0) {
 			left = 0;
 			x = left;
@@ -96,7 +96,7 @@ public class MappedTerrain extends Terrain {
 		}else if(z >= maxHeight - 1) {
 			up = maxHeight - 1;
 			z = up;
-		}
+		}*/
 		float heightL = heights[left][z];
 		float heightR = heights[right][z];
 		float heightD = heights[x][down];

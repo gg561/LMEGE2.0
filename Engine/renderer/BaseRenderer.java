@@ -10,6 +10,10 @@ import actors.Camera;
 import actors.Light;
 import entity.Entity;
 import entity.EntityRenderer;
+import gui.GUI;
+import gui.GUIRenderer;
+import line.Line;
+import line.LineRenderer;
 import models.Model;
 import renderer.RendererSettings.Enabled;
 import terrain.Terrain;
@@ -24,6 +28,8 @@ public class BaseRenderer {
 	
 	private EntityRenderer er = new EntityRenderer();
 	private TerrainRenderer tr = new TerrainRenderer();
+	private GUIRenderer gr = new GUIRenderer();
+	private LineRenderer lr = new LineRenderer();
 	
 	public BaseRenderer() {
 		for(Enabled enabled : RendererSettings.Enabled.values()) {
@@ -33,10 +39,12 @@ public class BaseRenderer {
 		skyColor = new Vector3f(0.8f, 0.9f, 1.8f);
 	}
 	
-	public void render(Camera cam, Light light) {
+	public void render(Camera cam, List<Light> lights) {
 		prepare();
-		er.render(cam, light, true);
-		tr.render(cam, light, true);
+		er.render(cam, lights, true);
+		tr.render(cam, lights, true);
+		gr.render(cam);
+		lr.render(cam);
 	}
 	
 	private void prepare() {
@@ -54,13 +62,16 @@ public class BaseRenderer {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 	
-	public void prepareBatch(List<Entity> ents, List<Terrain> terrains) {
+	public void prepareBatch(List<Entity> ents, List<Terrain> terrains, List<GUI> guis, List<Line> lines) {
 		er.prepareBatch(ents);
 		tr.prepareBatch(terrains);
+		gr.prepareBatch(guis);
+		lr.prepareBatch(lines);
 	}
 	
 	public void cleanUp() {
 		er.cleanUp();
+		gr.cleanUp();
 		Texture.cleanUp();
 	}
 

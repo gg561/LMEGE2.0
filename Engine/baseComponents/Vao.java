@@ -117,6 +117,10 @@ public class Vao {
 		dataBuffer.unbind();
 	}
 	
+	public Vbo getVbo() {
+		return dataBuffer;
+	}
+	
 	private void linkVboDataToAttributes(int[] lengths, int bytesPerVertex) {
 		int total = 0;
 		for(int i = 0; i < lengths.length; i ++) {
@@ -176,7 +180,8 @@ public class Vao {
 		for(Vbo vbo : dataBuffers) {
 			vbo.delete();
 		}
-		indexBuffer.delete();
+		if(indexBuffer != null)
+			indexBuffer.delete();
 	}
 
 }

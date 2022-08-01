@@ -15,7 +15,6 @@ import baseComponents.Vao;
 import models.TexturedModel;
 import renderer.BaseRenderer;
 import textures.Texture;
-
 public class EntityRenderer {
 	
 	private EntityShader shader;
@@ -25,8 +24,8 @@ public class EntityRenderer {
 		this.shader = new EntityShader();
 	}
 	
-	public void render(Camera cam, Light light, boolean doFog) {
-		prepare(cam, light);
+	public void render(Camera cam, List<Light> lights, boolean doFog) {
+		prepare(cam, lights);
 		for(TexturedModel texture : batches.keySet()) {
 			prepareSkin(texture);
 			if(texture.getTexture().isHasTransparency()) {
@@ -51,10 +50,10 @@ public class EntityRenderer {
 		shader.setFog(gradient, density, sky);
 	}
 	
-	private void prepare(Camera camera, Light light) {
+	private void prepare(Camera camera, List<Light> lights) {
 		shader.start();
 		shader.setCamera(camera.getProjection(), camera.getTransformation());
-		shader.setLight(light);
+		shader.setLight(lights);
 	}
 	
 	private void prepareInstance(Entity ent) {
@@ -69,6 +68,8 @@ public class EntityRenderer {
 	private void prepareSkin(TexturedModel texture) {
 		shader.loadShineVariables(texture.getTexture().getShineDamper(), texture.getTexture().getReflectivity());
 		shader.setUseFakeLighting(texture.isUseFakeLighting());
+		shader.setTextureAtlasRows(texture.getTexture().getRows());
+		shader.setTextureAtlasOffset(texture.getTexture().calculateOffset(texture.getTextureIndex()));
 		texture.getTexture().bind();
 		Vao model = texture.getModel().getVao();
 		model.bindAttributes(0, 1, 2);

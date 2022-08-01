@@ -1,0 +1,9 @@
+name ShaderRules
+open_module equals <mod>
+signal_module_index starts_with @
+signal_module_enclosed equals enclosed
+end_module equals </mod>
+signal_default equals //SIGNAL_DEFAULT
+signal_module_begin starts_with //~
+signal_module_name starts_with ->
+remove_line starts_with -remove

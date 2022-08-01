@@ -27,7 +27,6 @@ public class ActorGroup extends Movable{
 	
 	public void rotate(Vector3f rotation) {
 		super.rotate(rotation);
-		int index = 0;
 		for(Movable actor : actors) {
 			Vector3f direction = actor.getLocalPosition().sub(super.getLocalPosition(), new Vector3f());
 			direction.rotateX(this.getRotation().x);
@@ -35,7 +34,6 @@ public class ActorGroup extends Movable{
 			direction.rotateZ(this.getRotation().z);
 			actor.rotate(rotation);
 			actor.moveAround(super.getPosition(), direction);
-			index++;
 		}
 	}
 	

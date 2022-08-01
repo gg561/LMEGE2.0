@@ -13,12 +13,7 @@ import util.CustomFile;
 public class EntityShader extends ExpandableShader {
 	
 	public EntityShader() {
-		super();
-		defaultAllValues();
-	}
-	
-	public void defaultAllValues() {
-		super.defaultAllValues();
+		super(new CustomFile[] {}, new CustomFile[] {new CustomFile("shaders/parameters", "EntityCelShadingFrag.glslm"), new CustomFile("shaders/parameters", "EntityTransparencyFrag.glslm")});
 	}
 
 }

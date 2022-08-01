@@ -3,6 +3,7 @@ package actors;
 import org.joml.Vector3f;
 
 import collision.Collider;
+import game.Main;
 import terrain.Terrain;
 
 public class Movable implements Scalable {
@@ -15,15 +16,17 @@ public class Movable implements Scalable {
 	private Vector3f forward;
 	private Vector3f right;
 	private Vector3f up;
+	@Attached
 	private Collider collider;
 	private boolean hasGravity;
 	private float mass;
 	protected boolean onGround;
+	protected boolean debug;
 	
 	public Movable() {
 		this.position = new Vector3f();
 		this.rotation = new Vector3f();
-		this.scale = new Vector3f();
+		this.scale = new Vector3f(1, 1, 1);
 		this.localPosition = new Vector3f();
 		this.localRotation = new Vector3f(0, 0 ,0);
 		this.forward = new Vector3f(0, 0, 1);
@@ -34,58 +37,92 @@ public class Movable implements Scalable {
 	public void rotate(Vector3f rotation) {
 		this.rotation.add(rotation);
 		rotateDirections(rotation);
+		if(this.collider != null)
+			this.collider.rotate(rotation);
 	}
 	
 	public void setRotationWithDirections(Vector3f rotation) {
 		this.rotation.set(rotation);
 		rotateDirections(rotation);
+		if(this.collider != null)
+			this.collider.setRotationWithDirections(rotation);
 	}
 	
 	public void rotateLocal(Vector3f rotation) {
 		this.localRotation.add(rotation);
 		rotate(rotation);
+		if(this.collider != null)
+			this.collider.rotateLocal(rotation);
 	}
 	
 	public void move(Vector3f translation) {
-		if(collider != null) {
-			Vector3f factor = collider.getCollision().getCombinedDirection();
-			translation.add(translation.mul(factor.x, factor.y, factor.z, new Vector3f()));
-		}
+		//BOX SHADOWING DEBUG
+		//System.out.println(this + " trans1 " + this.position);
 		this.getPosition().add(forward.mul(translation.z, new Vector3f()));
 		this.getPosition().add(right.mul(translation.x, new Vector3f()));
 		this.getPosition().add(up.mul(translation.y, new Vector3f()));
-		//this.collider.setPosition(this.getPosition());
+		/*BOX SHADOWING DEBUG
+		System.out.println(this + " trans " + this.position);
+		System.out.println(Main.house + " house " + Main.house.getPosition());
+		*/
+		if(collider != null) {
+			/*Vector3f factor = collider.getCollision().getCombinedDirection();
+			translation.add(translation.mul(factor.x, factor.y, factor.z, new Vector3f()));*/
+			this.collider.move(translation);
+		}
 	}
 	
 	public void update() {
-		Terrain terrain = Terrain.getTerrain(this.getPosition().x, this.getPosition().z);
-		System.out.println("TERR " + this.getPosition());
-		float height = terrain.getHeightOfTerrain(this.getPosition().x, this.getPosition().z);
-		this.collider.setPosition(this.getPosition());
-		/*if(this.getPosition().y > height) {
-			System.out.println("Falling " + this.getPosition().y);
-			onGround = false;
-			this.move(new Vector3f(0, -mass, 0));
-		}else if(this.getPosition().y <= height) {
-			this.move(new Vector3f(0, height - this.getPosition().y, 0));
-			onGround = true;
-		}*/
-		if(terrain.getCollider().containsExec(new Vector3f(this.collider.getPosition().x, this.collider.getPosition().y - this.collider.getBounds().y, this.collider.getPosition().z))) {
-			System.out.println("COLL " + terrain.getCollider().getCollision().getCombinedDirection());
-			this.move(terrain.getCollider().getCollision().getCombinedDirection());
-			onGround = true;
-		}else {
-			this.move(new Vector3f(0, -mass, 0));
+		if(hasGravity) {
+			Terrain terrain = Terrain.getTerrain(this.getPosition().x, this.getPosition().z);
+			//System.out.println("TERR " + this.getPosition());
+			//float height = terrain.getHeightOfTerrain(this.getPosition().x, this.getPosition().z);
+			//this.collider.setPosition(this.getPosition());
+			/*if(this.getPosition().y > height) {
+				System.out.println("Falling " + this.getPosition().y);
+				onGround = false;
+				this.move(new Vector3f(0, -mass, 0));
+			}else if(this.getPosition().y <= height) {
+				this.move(new Vector3f(0, height - this.getPosition().y, 0));
+				onGround = true;
+			}*/
+			if(terrain.getCollider().containsExec(this)) {
+				/*BOX SHADOWING DEBUG
+				if(debug) {
+					System.out.println("SCND TERR " + getCollider().getCollision());
+				}*/
+				this.collider.reactToCollision(terrain.getCollider());
+				/*BOX SHADOWING DEBUG
+				if(debug) {
+					System.out.println("THRD TERR " + getCollider().getBounds());
+				}*/
+				this.collider.getCollision().removeCollision(terrain.getCollider());
+				onGround = true;
+			}else {
+				this.move(new Vector3f(0, -mass, 0));
+			}
 		}
 	}
 	
 	public void move(Vector3f translation, Vector3f direction) {
 		this.getPosition().add(direction.mul(translation.z, new Vector3f()));
+		if(this.collider != null)
+			this.collider.move(translation, direction);
 	}
 	
 	public void moveAround(Vector3f center, Vector3f dirToDistance) {
 		Vector3f orbitPosition = center.add(dirToDistance, new Vector3f());
 		this.setPosition(orbitPosition);
+		if(this.collider != null)
+			this.collider.setPosition(orbitPosition);
+	}
+	
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+	
+	public boolean isDebug() {
+		return debug;
 	}
 	
 	public Vector3f getForward() {
@@ -175,6 +212,10 @@ public class Movable implements Scalable {
 	
 	public boolean isHasGravity() {
 		return hasGravity;
+	}
+	
+	public Collider getCollider() {
+		return collider;
 	}
 	
 	public void setCollider(Collider collider) {

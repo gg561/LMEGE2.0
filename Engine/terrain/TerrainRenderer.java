@@ -23,8 +23,8 @@ public class TerrainRenderer {
 		
 	}
 	
-	public void render(Camera cam, Light light, boolean doFog) {
-		prepare(cam, light);
+	public void render(Camera cam, List<Light> lights, boolean doFog) {
+		prepare(cam, lights);
 		for(Terrain terrain : terrains) {
 			prepareTerrain(terrain);
 			if(doFog) {
@@ -40,10 +40,10 @@ public class TerrainRenderer {
 		shader.setFog(gradient, density, sky);
 	}
 	
-	public void prepare(Camera cam, Light light) {
+	public void prepare(Camera cam, List<Light> lights) {
 		shader.start();
 		shader.setCamera(cam.getProjection(), cam.getTransformation());
-		shader.setLight(light);
+		shader.setLight(lights);
 	}
 	
 	private void finish() {
@@ -57,7 +57,7 @@ public class TerrainRenderer {
 	private void prepareTerrain(Terrain terrain) {
 		terrain.getTextures().bind();
 		shader.loadShineVariables(100, 0f);
-		shader.tiles.loadFloat(terrain.getTiles());
+		shader.loadTiles(terrain.getTiles());
 		Vao model = terrain.getModel().getVao();
 		model.bindAttributes(0, 1, 2);
 		shader.loadModel(terrain.getTransformation());
