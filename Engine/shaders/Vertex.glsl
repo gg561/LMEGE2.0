@@ -29,6 +29,10 @@ uniform float textureAtlasRows;
 
 uniform float numberOfLights;
 
+uniform vec4 clippingDistance;
+
+//g init
+
 void main(void){
 	
 	//RENDERING
@@ -36,7 +40,9 @@ void main(void){
 	color = vec3(1, 1, 1);
 	vec4 worldPosition = modelMatrix * vec4(in_position, 1.0);
 	vec4 positionRelativeCamera = viewMatrix * worldPosition;
-	gl_Position = projMatrix * positionRelativeCamera;
+	vec4 clipSpace = projMatrix * positionRelativeCamera;
+	gl_Position = clipSpace;
+	gl_ClipDistance[0] = dot(worldPosition, clippingDistance);
 	float inRows = textureAtlasRows;
 	if(inRows < 1){
 		inRows = 1;
@@ -52,14 +58,26 @@ void main(void){
 	//LIGHTING
 	
 	surfaceNormal = (modelMatrix * vec4(normal, 0.0)).xyz;
+
+//~ normalMapTBN
+	
 	for(int i = 0; i < numberOfLights; i ++){
 		lightDirection[i] = lightPosition[i] - worldPosition.xyz;
+		
+//~ normalMapLightVectors
+
 	}
 	toCameraVec = (inverse(viewMatrix) * vec4(0, 0, 0, 1)).xyz - worldPosition.xyz;
+	
+//~ normalMapCameraVec
 	numOfLights = numberOfLights;
 	//FOG
 	
 	float distance = length(positionRelativeCamera.xyz);
 	visibility = exp(-pow((distance * fogDensity), fogGradient));
 	visibility = clamp(visibility, 0, 1);
+	
+//~ shadowMapVertex
+//~ geometryWrite
+
 }

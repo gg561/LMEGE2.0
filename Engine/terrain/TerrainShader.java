@@ -6,6 +6,7 @@ import java.util.List;
 import org.joml.Vector3f;
 
 import shaders.ExpandableShader;
+import shaders.ShaderConsts;
 import shaders.ShaderProgram;
 import shaders.UniformFloat;
 import shaders.UniformMatrix;
@@ -14,7 +15,6 @@ import util.CustomFile;
 
 public class TerrainShader extends ExpandableShader {
 	
-	private static final CustomFile VERTEX_MERGEABLE = new CustomFile("terrain", "TerrainVertexParams.glslm");
 	private static final CustomFile FRAGMENT_MERGEABLE = new CustomFile("shaders/parameters", "TerrainMultiTextureFrag.glslm");
 	/*protected UniformFloat tiles = new UniformFloat("tiles");
 	protected UniformSampler backgroundTexture = new UniformSampler("backgroundTexture");
@@ -25,12 +25,12 @@ public class TerrainShader extends ExpandableShader {
 	protected List<UniformSampler> textures = new ArrayList<UniformSampler>() {{add(backgroundTexture); add(rTexture); add(gTexture); add(bTexture); add(blendMap);}};
 	*/
 	public TerrainShader() {
-		super(new CustomFile[] {}, new CustomFile[] {FRAGMENT_MERGEABLE, new CustomFile("shaders/parameters", "EntityCelShadingFrag.glslm")});
-		super.textures.add((UniformSampler) uniformMap.get("backgroundTexture"));
-		super.textures.add((UniformSampler) uniformMap.get("rTexture"));
-		super.textures.add((UniformSampler) uniformMap.get("gTexture"));
-		super.textures.add((UniformSampler) uniformMap.get("bTexture"));
-		super.textures.add((UniformSampler) uniformMap.get("blendMap"));
+		super(new CustomFile[] {ShaderConsts.ShadowVert}, new CustomFile[] {FRAGMENT_MERGEABLE, ShaderConsts.CelShadingFrag, ShaderConsts.SoftShadowFrag});
+		super.textures.add(p().f.sampler("backgroundTexture"));
+		super.textures.add(p().f.sampler("rTexture"));
+		super.textures.add(p().f.sampler("gTexture"));
+		super.textures.add(p().f.sampler("bTexture"));
+		super.textures.add(p().f.sampler("blendMap"));
 		super.storeAllUniformLocations(textures);
 		//super.storeAllUniformLocations(tiles);
 		//defaultAllValues();
@@ -45,7 +45,7 @@ public class TerrainShader extends ExpandableShader {
 	}*/
 	
 	public void loadTiles(float tiles) {
-		((UniformFloat) uniformMap.get("tiles")).loadFloat(tiles);
+		p().f.num("tiles").loadFloat(tiles);
 	}
 	
 	public void connectTextureUnits() {
@@ -54,11 +54,15 @@ public class TerrainShader extends ExpandableShader {
 		gTexture.loadSampler(2);
 		bTexture.loadSampler(3);
 		blendMap.loadSampler(4);*/
-		((UniformSampler) uniformMap.get("backgroundTexture")).loadSampler(0);
-		((UniformSampler) uniformMap.get("rTexture")).loadSampler(1);
-		((UniformSampler) uniformMap.get("gTexture")).loadSampler(2);
-		((UniformSampler) uniformMap.get("bTexture")).loadSampler(3);
-		((UniformSampler) uniformMap.get("blendMap")).loadSampler(4);
+		p().f.sampler("backgroundTexture").loadSampler(0);
+		p().f.sampler("rTexture").loadSampler(1);
+		p().f.sampler("gTexture").loadSampler(2);
+		p().f.sampler("bTexture").loadSampler(3);
+		p().f.sampler("blendMap").loadSampler(4);
+	}
+	
+	public void loadTexture() {
+		p().f.sampler("depthMap").loadSampler(5);
 	}
 
 }

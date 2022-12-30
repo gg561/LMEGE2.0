@@ -1,12 +1,19 @@
 package util;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.function.Consumer;
 
 import org.lwjglx.BufferUtils;
+
+import game.Main;
 
 public class CustomFile {
 	
@@ -59,7 +66,17 @@ public class CustomFile {
 	}
 	
 	public InputStream getStream() {
-		return Class.class.getResourceAsStream(path);
+		return Main.class.getResourceAsStream(path);
+	}
+	
+	public OutputStream getOutStream() {
+		try {
+			return new FileOutputStream(new File(Class.class.getResource(path).getPath()));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public BufferedReader getReader() {
@@ -76,7 +93,7 @@ public class CustomFile {
 	
 	public ByteBuffer getByteBuffer(int size) {
 		InputStream is = getStream();
-		ByteBuffer buffer = BufferUtils.createByteBuffer(size);
+		ByteBuffer buffer = ByteBuffer.allocateDirect(size);
 		int data = -1;
 		try {
 			while((data = is.read()) != -1) {
@@ -104,6 +121,19 @@ public class CustomFile {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+	
+	public void read(Consumer<String> action) {
+		BufferedReader reader = getReader();
+		String line;
+		try {
+			while((line = reader.readLine()) != null) {
+				action.accept(line);
+			}
+			reader.close();
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 

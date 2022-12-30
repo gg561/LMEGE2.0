@@ -1,10 +1,14 @@
 package readers;
 
+import java.util.HashMap;
+
 import org.joml.Vector3f;
 
 public class Vertex {
 	
 	private static final int NO_INDEX = -1;
+	public static final String TANGENT_PARAM_NAME = "tangent";
+	public static final String AVERAGE_TANGENT_PARAM_NAME = "average_tangent";
 	
 	private Vector3f position;
 	private int textureIndex = NO_INDEX;
@@ -12,6 +16,7 @@ public class Vertex {
 	private Vertex duplicateVertex = null;
 	private int index;
 	private float length;
+	private HashMap<String, Object> params = new HashMap<String, Object>();
 	
 	public Vertex(int index,Vector3f position){
 		this.index = index;
@@ -45,6 +50,10 @@ public class Vertex {
 
 	public Vector3f getPosition() {
 		return position;
+	}
+	
+	public HashMap<String, Object> getParams(){
+		return params;
 	}
 
 	public int getTextureIndex() {

@@ -1,0 +1,17 @@
+>> init global ->{
+uniform mat4 lightBiasedMatrix;
+out vec4 shadowCoords;
+out vec3 worldSpace;
+out float shadowVisibility;
+const float shadowDistance = 150;
+const float transitionDistance = 10;
+}<<
+
+>> shadowMapVertex ->{
+	shadowCoords = lightBiasedMatrix * worldPosition;
+	//shadowCoords = clamp(shadowCoords, 1, -1);
+	worldSpace = worldPosition.xyz;
+	distance = distance - (shadowDistance - transitionDistance);
+	distance /= transitionDistance;
+	shadowVisibility = clamp(1 - distance, 1, 0);
+}<<

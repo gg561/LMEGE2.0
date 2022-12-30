@@ -1,0 +1,8 @@
+>> init global ->{
+uniform sampler2D normalMap;
+}<<
+
+>> normalMapTexture ->{
+	vec4 normalMapColor = 2 * texture(normalMap, textureCoords) - 1;
+	unitNormal = normalize(normalMapColor.rgb);
+}<<

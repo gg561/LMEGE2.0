@@ -14,6 +14,7 @@ public class SyncTimer {
     private int mode;
     private double timeThen;
     private boolean enabled = true;
+    private float delta = 1;
      
     public SyncTimer(int mode) {
         setNewMode(mode);
@@ -64,9 +65,9 @@ public class SyncTimer {
         int updates = 0;
          
         if (enabled) {
-            double gapTo = resolution / fps + timeThen;
-             
-            while (gapTo < timeNow) {
+            double gapTo = resolution / fps + timeThen; //gapTo = NANO_RESOLUTION / 70 + timeLastFrame
+            delta = (float) gapTo;
+            while (gapTo < timeNow) { //if NANO_RESOLUTION / 70 + timeLastFrame < getTime();
                 gapTo = resolution / fps + gapTo;
                 updates++;
             }
@@ -85,6 +86,10 @@ public class SyncTimer {
         }
          
         return updates;
+    }
+    
+    public float getDelta() {
+    	return delta / 1000f;
     }
 }
 

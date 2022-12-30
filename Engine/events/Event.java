@@ -1,11 +1,11 @@
 package events;
 
-public interface Event {
+import castable.Executable;
+
+public interface Event<T> extends Executable<T> {
 	
 	public void start();
 	public void stop();
-	public void finish();
-	public void pause();
-	public void resume();
+	public boolean isActive();
 
 }

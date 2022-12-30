@@ -1,0 +1,11 @@
+>> init global ->{
+const float levels = 6;
+}<<
+>> diffuseCel ->{
+	float levelDiffuse = floor(levels * brightness);
+	brightness = levelDiffuse / levels;
+}<<
+>> specularCel ->{
+	float levelSpecular = floor(levels * dampedSpecular);
+	dampedSpecular = levelSpecular / levels;
+}<<

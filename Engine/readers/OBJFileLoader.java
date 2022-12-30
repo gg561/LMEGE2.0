@@ -8,29 +8,43 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import baseComponents.Vao;
+import game.Main;
 import models.Model;
 import renderer.Loader;
+import util.CustomFile;
 
 public class OBJFileLoader {
 	
 	private static final String RES_LOC = "res/";
 
-	public static Model loadOBJ(String objFileName, Loader loader) {
-		InputStreamReader isr = new InputStreamReader(Class.class.getResourceAsStream("/" + objFileName + ".obj"));
+	public static Model loadOBJ(CustomFile file, Loader loader) {
+		InputStreamReader isr = new InputStreamReader(file.getStream());
 		BufferedReader reader = new BufferedReader(isr);
-		String line;
 		List<Vertex> vertices = new ArrayList<Vertex>();
 		List<Vector2f> textures = new ArrayList<Vector2f>();
 		List<Vector3f> normals = new ArrayList<Vector3f>();
 		List<Integer> indices = new ArrayList<Integer>();
+		readToList(reader, vertices, textures, normals, indices);
+		removeUnusedVertices(vertices);
+		float[] verticesArray = new float[vertices.size() * 3];
+		float[] texturesArray = new float[vertices.size() * 2];
+		float[] normalsArray = new float[vertices.size() * 3];
+		float furthest = convertDataToArrays(vertices, textures, normals, verticesArray,
+				texturesArray, normalsArray);
+		int[] indicesArray = convertIndicesListToArray(indices);
+		return loader.loadToVAO(verticesArray, texturesArray, normalsArray, indicesArray);
+	}
+	
+	private static void readToList(BufferedReader reader, List<Vertex> vertices, List<Vector2f> textures, List<Vector3f> normals, List<Integer> indices) {
+		String line;
 		try {
-			while (true) {
-				line = reader.readLine();
+			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("v ")) {
 					String[] currentLine = line.split(" ");
 					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]),
@@ -68,18 +82,9 @@ public class OBJFileLoader {
 		} catch (IOException e) {
 			System.err.println("Error reading the file");
 		}
-		removeUnusedVertices(vertices);
-		float[] verticesArray = new float[vertices.size() * 3];
-		float[] texturesArray = new float[vertices.size() * 2];
-		float[] normalsArray = new float[vertices.size() * 3];
-		float furthest = convertDataToArrays(vertices, textures, normals, verticesArray,
-				texturesArray, normalsArray);
-		int[] indicesArray = convertIndicesListToArray(indices);
-		
-		return loader.loadToVAO(verticesArray, texturesArray, normalsArray, indicesArray);
 	}
 
-	private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
+	private static Vertex processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
 		int index = Integer.parseInt(vertex[0]) - 1;
 		Vertex currentVertex = vertices.get(index);
 		int textureIndex = Integer.parseInt(vertex[1]) - 1;
@@ -88,8 +93,9 @@ public class OBJFileLoader {
 			currentVertex.setTextureIndex(textureIndex);
 			currentVertex.setNormalIndex(normalIndex);
 			indices.add(index);
+			return currentVertex;
 		} else {
-			dealWithAlreadyProcessedVertex(currentVertex, textureIndex, normalIndex, indices,
+			return dealWithAlreadyProcessedVertex(currentVertex, textureIndex, normalIndex, indices,
 					vertices);
 		}
 	}
@@ -126,14 +132,15 @@ public class OBJFileLoader {
 		return furthestPoint;
 	}
 
-	private static void dealWithAlreadyProcessedVertex(Vertex previousVertex, int newTextureIndex,
+	private static Vertex dealWithAlreadyProcessedVertex(Vertex previousVertex, int newTextureIndex,
 			int newNormalIndex, List<Integer> indices, List<Vertex> vertices) {
 		if (previousVertex.hasSameTextureAndNormal(newTextureIndex, newNormalIndex)) {
 			indices.add(previousVertex.getIndex());
+			return previousVertex;
 		} else {
 			Vertex anotherVertex = previousVertex.getDuplicateVertex();
 			if (anotherVertex != null) {
-				dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex,
+				return dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex,
 						indices, vertices);
 			} else {
 				Vertex duplicateVertex = new Vertex(vertices.size(), previousVertex.getPosition());
@@ -142,6 +149,7 @@ public class OBJFileLoader {
 				previousVertex.setDuplicateVertex(duplicateVertex);
 				vertices.add(duplicateVertex);
 				indices.add(duplicateVertex.getIndex());
+				return duplicateVertex;
 			}
 
 		}

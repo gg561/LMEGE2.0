@@ -1,12 +1,12 @@
+>> init global ->{
 uniform sampler2D backgroundTexture;
 uniform sampler2D rTexture;
 uniform sampler2D gTexture;
 uniform sampler2D bTexture;
 uniform sampler2D blendMap;
 uniform float tiles;
-enclosed
--> multiTexture
-<mod>
+}<<
+>> multiTexture ->{
 	vec4 blendMapColor = texture(blendMap, textureCoords);
 	float backTextureAmount = 1 - (blendMapColor.r + blendMapColor.g + blendMapColor.b);
 	
@@ -20,4 +20,4 @@ enclosed
 	vec4 totalColor = backgroundTextureColor + rTextureColor + gTextureColor + bTextureColor;
 	fragColor = diffuseColor * simpleColor * totalColor + specularColor;
 	fogColor = mix(vec4(skyColor, 1), fragColor, visibility);
-</mod>
+}<<

@@ -7,6 +7,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import actors.Camera;
+import renderer.WorldRenderer;
 
 public class LineRenderer {
 	
@@ -19,6 +20,7 @@ public class LineRenderer {
 	}
 	
 	public void render(Camera camera) {
+		if(batch.isEmpty()) return;
 		prepare(camera);
 		for(Line line : batch) {
 			prepareInstance(line);
@@ -36,11 +38,17 @@ public class LineRenderer {
 		batch.addAll(lines);
 	}
 	
+	public void setProjection(Camera camera) {
+		shader.start();
+		shader.setProjection(camera);
+		shader.stop();
+	}
+	
 	private void prepare(Camera camera) {
 		shader.start();
-		shader.setProjMatrix(camera);
-		shader.setViewMatrix(camera);
+		shader.setView(camera);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		WorldRenderer.disableCulling();
 	}
 	
 	private void prepareInstance(Line line) {
@@ -55,6 +63,7 @@ public class LineRenderer {
 	
 	private void finish() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		WorldRenderer.enableCulling();
 		shader.stop();
 	}
 	

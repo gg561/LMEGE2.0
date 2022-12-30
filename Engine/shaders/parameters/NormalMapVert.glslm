@@ -1,0 +1,18 @@
+>> init global ->{
+layout (location = 3) in vec3 tangent;
+}<<
+
+>> normalMapTBN ->{
+	vec3 norm = normalize(surfaceNormal);
+	vec3 tang = normalize((modelMatrix * vec4(tangent, 0)).xyz);
+	tang = normalize(tang - dot(tang, norm) * norm);
+	vec3 bitang = cross(norm, tang);
+	mat3 TBN = mat3(tang, bitang, norm);
+	//TBN = transpose(TBN);
+}<<
+>> normalMapLightVectors ->{
+	lightDirection[i] *= TBN;
+}<<
+>> normalMapCameraVec ->{
+	toCameraVec *= TBN;
+}<<

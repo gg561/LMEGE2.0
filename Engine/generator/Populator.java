@@ -9,7 +9,7 @@ import entity.Entity;
 import terrain.Terrain;
 
 public class Populator {
-	
+	/*
 	public static Entity[] randomPopulate(Entity model, int amount) {
 		Entity[] entities = new Entity[amount];
 		for(int i = 0; i < amount; i++) {
@@ -26,6 +26,6 @@ public class Populator {
 			entities[Arrays.asList(entities).indexOf(model)] = null;
 		}
 		return entities;
-	}
+	}*/
 
 }

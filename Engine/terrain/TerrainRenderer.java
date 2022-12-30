@@ -3,17 +3,25 @@ package terrain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL40;
 
 import actors.Camera;
-import actors.Light;
+import actors.lights.Light;
 import baseComponents.Vao;
 import entity.Entity;
+import grass.GrassShader;
 import models.TexturedModel;
-import renderer.BaseRenderer;
+import renderer.Renderer;
+import renderer.WorldRenderer;
+import shadows.ShadowBuffers;
+import shadows.ShadowRenderer;
+import util.Matrices;
 
-public class TerrainRenderer {
+public class TerrainRenderer implements Renderer {
 	
 	private TerrainShader shader = new TerrainShader();
 	
@@ -23,14 +31,17 @@ public class TerrainRenderer {
 		
 	}
 	
-	public void render(Camera cam, List<Light> lights, boolean doFog) {
+	public void render(Camera cam, List<Light> lights, boolean doFog, Vector4f clipPlane) {
+		if(terrains.isEmpty()) return;
 		prepare(cam, lights);
+		shader.setClippingPlane(clipPlane);
+		if(doFog) {
+			renderFog(WorldRenderer.GRADIENT, WorldRenderer.DENSITY, WorldRenderer.skyColor);
+		}
 		for(Terrain terrain : terrains) {
 			prepareTerrain(terrain);
-			if(doFog) {
-				renderFog(BaseRenderer.GRADIENT, BaseRenderer.DENSITY, BaseRenderer.skyColor);
-			}
-			GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getModel().getVao().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
+			if(terrain.getModel().shouldRender())
+				GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getVao().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 			unbindTerrain(terrain);
 		}
 		finish();
@@ -40,10 +51,18 @@ public class TerrainRenderer {
 		shader.setFog(gradient, density, sky);
 	}
 	
-	public void prepare(Camera cam, List<Light> lights) {
+	public void setProjection(Camera camera) {
 		shader.start();
-		shader.setCamera(cam.getProjection(), cam.getTransformation());
+		shader.setProjection(camera.getProjection());
+		shader.stop();
+	}
+	
+	public void prepare(Camera camera, List<Light> lights) {
+		shader.start();
+		//shader.setProjection(camera.getProjection());
+		shader.setView(camera.getTransformation());
 		shader.setLight(lights);
+		shader.setShadow(Matrices.LIGHT_BIASED_DEFAULT.mul(camera.getOrthographic().mul(lights.get(0).getTransformation().translate(camera.getPosition().negate(new Vector3f())), new Matrix4f()), new Matrix4f()));
 	}
 	
 	private void finish() {
@@ -51,21 +70,28 @@ public class TerrainRenderer {
 	}
 	
 	private void unbindTerrain(Terrain terrain) {
-		terrain.getModel().getVao().unbindAttributes(0, 1, 2);
+		terrain.getHeightMap().getModel().getVao().unbindAttributes(0, 1, 2);
 	}
 	
 	private void prepareTerrain(Terrain terrain) {
 		terrain.getTextures().bind();
-		shader.loadShineVariables(100, 0f);
+		shader.setReflectivity(10, 0.1f);
 		shader.loadTiles(terrain.getTiles());
-		Vao model = terrain.getModel().getVao();
+		Vao model = terrain.getHeightMap().getModel().getVao();
+		shader.loadTexture();
+		ShadowBuffers.shadowTexture().bind(5); // TO CHANGE TO ADDITIONAL TEXTURE STYLE
 		model.bindAttributes(0, 1, 2);
-		shader.loadModel(terrain.getTransformation());
+		shader.setModel(terrain.getTransformation());
 		//shader.texture().loadSampler(0);
 	}
 	
 	public void prepareBatch(List<Terrain> terrains) {
 		this.terrains.addAll(terrains);
+	}
+	
+	public void cleanUp() {
+		shader.cleanUp();
+		terrains.clear();
 	}
 
 }

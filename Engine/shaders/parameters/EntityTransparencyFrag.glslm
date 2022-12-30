@@ -1,7 +1,5 @@
-enclosed
--> transparency
-<mod>
+>> transparency ->{
 	if(textureColor.a < 0.5){
 		discard;
 	}
-</mod>
+}<<

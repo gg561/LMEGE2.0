@@ -5,20 +5,19 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import actors.Movable;
+import baseComponents.Shape;
 import models.TexturedModel;
 import renderer.Loader;
+import scene.Renderable;
 import textures.Texture;
 
-public class GUI extends Movable {
+public class GUI extends Movable implements Renderable {
 	
 	private TexturedModel model;
 	
-	private float[] positions = {-1, 1,-1, -1, 1, 1, 1, -1};
-	//float[] positions = {-1, 1, 1, 1, -1, -1, 1, -1};
-	
 	public GUI(Loader loader, Vector2f position, Vector2f size, Texture texture) {
 		super();
-		this.model = new TexturedModel(loader.loadToVAO2D(positions), texture);
+		this.model = new TexturedModel(loader.loadToVAO(Shape.PLANE_2D_STRIPS, 2), texture);
 		super.setPosition(new Vector3f(position, 0.1f));
 		super.setScale(new Vector3f(size, 0f));
 	}

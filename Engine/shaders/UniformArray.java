@@ -12,21 +12,23 @@ public class UniformArray extends Uniform {
 	private int size = 0;
 	private int[] locations;
 
-	protected UniformArray(String name, int size) {
+	public UniformArray(String name, int size) {
 		super(name);
 		this.size = size;
 		locations = new int[size];
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void storeUniformLocation(int programID) {
+	public boolean storeUniformLocation(int programID) {
 		for(int i = 0; i < size; i ++) {
 			int location = GL20.glGetUniformLocation(programID, getName().split("\\[")[0] + "[" + i + "]");
 			if(location == NOT_FOUND) {
 				System.err.println("No uniform variable called " + getName().split("\\[")[0] + "[" + i + "]" + " found!");
+				return false;
 			}
 			locations[i] = location;
 		}
+		return true;
 	}
 	
 	public int getLocation() {

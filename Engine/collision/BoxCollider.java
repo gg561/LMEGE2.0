@@ -5,16 +5,17 @@ import org.joml.Vector3f;
 import actors.Movable;
 import game.Main;
 
-public class BoxCollider extends Collider {
+public class BoxCollider extends PointBasedCollider {
 	// 		0				1				2			3				4				5				6			7
 	//leftBottomBack, rightBottomBack, leftUpBack, rightUpBack, leftBottomFront, rightBottomFront, leftUpFront, rightUpFront
-	private Vector3f[] corners = new Vector3f[8];
-	private Vector3f[] localCorners = new Vector3f[8];
+	//private Vector3f[] corners = new Vector3f[8];
+	//private Vector3f[] localCorners = new Vector3f[8];
 
 	public BoxCollider(Vector3f bounds, Movable bounded, float scale, boolean immobile) {
-		super(bounds, bounded, scale, immobile);
+		super(bounds, bounded, scale, immobile, 8);
+		super.complexity = 2;
 		// TODO Auto-generated constructor stub
-		resetAxis();
+		recalculateCorners();
 		Vector3f left = this.getPosition().sub(this.getRight().mul(bounds.x, new Vector3f()), new Vector3f());
 		Vector3f right = this.getPosition().add(this.getRight().mul(bounds.x, new Vector3f()), new Vector3f());
 		Vector3f down = this.getPosition().sub(this.getUp().mul(bounds.y, new Vector3f()), new Vector3f());
@@ -41,19 +42,21 @@ public class BoxCollider extends Collider {
 	@Override
 	public void reactToCollision() {
 		// TODO Auto-generated method stub
-		this.bounded.move(this.getCollision().getCombinedDirection());
+		if(!this.immobile)
+			this.bounded.move(this.getCollision().getCombinedDirection());
 	}
 
 	@Override
 	public void reactToCollision(Collider other) {
 		// TODO Auto-generated method stub
-		this.bounded.move(this.getCollision().getDirection(other));
+		if(!this.immobile)
+			this.bounded.move(this.getCollision().getDirection(other));
 		/* BOX SHADOWING DEBUG
 		System.out.println("BOUNDED " + this + " " + this.bounded);
 		System.out.println(this.bounded.getCollider());
 		System.out.println(Main.house.getPosition());*/
 	}
-
+/*
 	@Override
 	public boolean contains(Vector3f location) {
 		// TODO Auto-generated method stub
@@ -84,7 +87,7 @@ public class BoxCollider extends Collider {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public boolean containsExec(Movable movable) {
 		// TODO Auto-generated method stub
@@ -101,47 +104,9 @@ public class BoxCollider extends Collider {
 		}
 		collision.addCollider(movable.getCollider(), collisionDir);
 		return collided;
-	}
+	}*/
 	
-	public void move(Vector3f translation) {
-		//BOX SHADOWING DEBUG
-		//System.out.println(super.bounded + " bounding " + translation);
-		super.move(translation);
-		updateAxis();
-		/*
-		for(int i = 0; i < corners.length; i ++) {
-			corners[i].add(this.getRight().mul(translation.x, new Vector3f()));
-			corners[i].add(this.getUp().mul(translation.y, new Vector3f()));
-			corners[i].add(this.getForward().mul(translation.z, new Vector3f()));
-		}*/
-	}
-	
-	public void move(Vector3f translation, Vector3f direction) {
-		super.move(translation, direction);
-		//resetAxis();
-	}
-	
-	public void rotate(Vector3f rotation) {
-		super.rotate(rotation);
-		updateAxis();
-	}
-	
-	public void setRotationWithDirection(Vector3f rotation) {
-		super.setRotationWithDirections(rotation);
-		//resetAxis();
-	}
-	
-	public void setPosition(Vector3f position) {
-		super.setPosition(position);
-		updateAxis();
-	}
-	
-	public void setBounded(Movable bounded) {
-		super.setBounded(bounded);
-		resetAxis();
-	}
-	
-	public void resetAxis() {
+	public void recalculateCorners() {
 		Vector3f left = this.getPosition().sub(this.getRight().mul(bounds.x, new Vector3f()), new Vector3f());
 		Vector3f right = this.getPosition().add(this.getRight().mul(bounds.x, new Vector3f()), new Vector3f());
 		Vector3f down = this.getPosition().sub(this.getUp().mul(bounds.y, new Vector3f()), new Vector3f());
@@ -159,7 +124,7 @@ public class BoxCollider extends Collider {
 		corners[7] = right.add(up, new Vector3f()).add(front, new Vector3f());
 	}
 	
-	private void updateAxis() {
+	public void updateCorners() {
 		for(int i = 0; i < corners.length; i ++) {
 			Vector3f direction = localCorners[i].sub(super.getLocalPosition(), new Vector3f());
 			direction.rotateX(this.getRotation().x);
@@ -174,8 +139,14 @@ public class BoxCollider extends Collider {
 	}
 	
 	public BoxCollider clone() {
-		System.out.println(this.bounds + " " + this.scale);
-		return new BoxCollider(new Vector3f(this.bounds), null, this.scale, this.immobile);
+		System.out.println(this.bounds + " " + this.size);
+		return new BoxCollider(new Vector3f(this.bounds), null, this.size, this.immobile);
+	}
+	
+	public void addCollision(Collider collider, Vector3f direction) {
+		if(!this.immobile) {
+			this.collision.addCollider(collider, direction);
+		}
 	}
 
 }

@@ -10,7 +10,7 @@ in vec3 toCameraVec;
 in float visibility;
 in float numOfLights;
 
-out vec4 outColor;
+layout (location = 0) out vec4 outColor;
 
 uniform vec3 lightColor[MAX_NUMBER_OF_LIGHTS];
 uniform vec3 lightAttenuation[MAX_NUMBER_OF_LIGHTS];
@@ -19,12 +19,11 @@ uniform float shineDamper;
 uniform float reflectivity;
 uniform vec3 skyColor;
 
-//SIGNAL_DEFAULT
+//g init
 
 void main(void){
 
 	//VARIABLES
-	
 	vec4 diffuseColor = vec4(0.0);
 	vec4 simpleColor = vec4(1, 1, 1, 1);
 	vec4 textureColor;
@@ -33,6 +32,7 @@ void main(void){
 	//LIGHTING
 	
 	vec3 unitNormal = normalize(surfaceNormal);
+//~ normalMapTexture
 	vec3 unitCamVec = normalize(toCameraVec);
 	for(int i = 0; i < numOfLights; i++){
 		float distance = length(lightDirection[i]);
@@ -65,12 +65,17 @@ void main(void){
 	//TRANSPARENCY
 //~ transparency
 	
+//~ shadowMap
 	//OUTPUT
 	vec4 fragColor = diffuseColor * simpleColor * textureColor + specularColor;
 	vec4 fogColor = mix(vec4(skyColor, 1), fragColor, visibility);
+
+
 //~ multiTexture
+
 
 
 	//outColor = fragColor;
 	outColor = fogColor;
+//~ normalTest
 }

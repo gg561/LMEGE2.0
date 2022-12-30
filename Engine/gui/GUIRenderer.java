@@ -9,15 +9,16 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 import actors.Camera;
-import actors.Light;
+import actors.lights.Light;
 import baseComponents.Vao;
 import entity.Entity;
 import entity.EntityShader;
 import models.TexturedModel;
-import renderer.BaseRenderer;
+import renderer.Renderer;
+import renderer.WorldRenderer;
 import textures.Texture;
 
-public class GUIRenderer {
+public class GUIRenderer implements Renderer {
 	
 	private GUIShader shader = new GUIShader();
 	private List<GUI> batches = new ArrayList<GUI>();
@@ -26,7 +27,14 @@ public class GUIRenderer {
 		
 	}
 	
+	public void setProjection(Camera camera) {
+		shader.start();
+		shader.setOrthographic(camera.getOrthographic());
+		shader.stop();
+	}
+	
 	public void render(Camera cam) {
+		if(batches.isEmpty()) return;
 		prepare(cam);
 		for(GUI gui : batches) {
 			prepareSkin(gui.getModel());

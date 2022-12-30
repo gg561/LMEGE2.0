@@ -3,6 +3,7 @@ package entity;
 import org.joml.Vector3f;
 
 import shaders.ExpandableShader;
+import shaders.ShaderConsts;
 import shaders.ShaderProgram;
 import shaders.UniformBoolean;
 import shaders.UniformFloat;
@@ -13,7 +14,17 @@ import util.CustomFile;
 public class EntityShader extends ExpandableShader {
 	
 	public EntityShader() {
-		super(new CustomFile[] {}, new CustomFile[] {new CustomFile("shaders/parameters", "EntityCelShadingFrag.glslm"), new CustomFile("shaders/parameters", "EntityTransparencyFrag.glslm")});
+		super(new CustomFile[] {ShaderConsts.ShadowVert}, new CustomFile[] {ShaderConsts.CelShadingFrag, new CustomFile("shaders/parameters", "EntityTransparencyFrag.glslm"), ShaderConsts.SoftShadowFrag});
 	}
 
+	/*
+	 * 
+	 * 
+	 */
+	
+	protected void connectSamplers() {
+		super.connectSamplers();
+		p().f.sampler("depthMap").loadSampler(1);
+	}
+	
 }

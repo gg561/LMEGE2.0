@@ -1,11 +1,13 @@
 package collision;
 
+import java.util.function.Predicate;
+
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import actors.Movable;
 
-public class AABBCollider extends Collider{
+public class AABBCollider extends Collider {
 
 	public AABBCollider(Vector3f bounds, Movable bounded, float scale, boolean immobile) {
 		super(bounds, bounded, scale, immobile);
@@ -13,22 +15,22 @@ public class AABBCollider extends Collider{
 
 	@Override
 	public Collision detectCollision(Collider other) {
-		if(this.position.x + this.bounds.x > other.position.x - other.bounds.x) {
+		if(this.position.x + this.bounds.x > other.getPosition().x - other.bounds.x) {
 			collision.addCollider(other, new Vector3f(1, 0, 0));
 		}
-		if(this.position.x - this.bounds.x < other.position.x + other.bounds.x) {
+		if(this.position.x - this.bounds.x < other.getPosition().x + other.bounds.x) {
 			collision.addCollider(other, new Vector3f(-1, 0, 0));
 		}
-		if(this.position.z + this.bounds.z > other.position.z - other.bounds.z) {
+		if(this.position.z + this.bounds.z > other.getPosition().z - other.bounds.z) {
 			collision.addCollider(other, new Vector3f(0, 0, 1));
 		}
-		if(this.position.z - this.bounds.z < other.position.z + other.bounds.z) {
+		if(this.position.z - this.bounds.z < other.getPosition().z + other.bounds.z) {
 			collision.addCollider(other, new Vector3f(0, 0, -1));
 		}
-		if(this.position.y + this.bounds.y > other.position.y - other.bounds.y) {
+		if(this.position.y + this.bounds.y > other.getPosition().y - other.bounds.y) {
 			collision.addCollider(other, new Vector3f(0, 1, 0));
 		}
-		if(this.position.y - this.bounds.y < other.position.y + other.bounds.y) {
+		if(this.position.y - this.bounds.y < other.getPosition().y + other.bounds.y) {
 			collision.addCollider(other, new Vector3f(0, -1, 0));
 		}
 		return collision;
@@ -107,7 +109,27 @@ public class AABBCollider extends Collider{
 	@Override
 	public AABBCollider clone() {
 		// TODO Auto-generated method stub
-		return new AABBCollider(this.bounds, this.bounded, this.scale, this.immobile);
+		return new AABBCollider(this.bounds, this.bounded, this.size, this.immobile);
+	}
+	
+	public void addCollision(Collider collider, Vector3f direction) {
+		if(!this.immobile) {
+			this.collision.addCollider(collider, direction);
+		}
+	}
+	
+	public void collide(Collider other) {
+		
+	}
+	
+	public void reactToCollision(Predicate<Collider> pred) {
+		
+	}
+
+	@Override
+	public Vector3f containsCorner(Vector3f vector) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

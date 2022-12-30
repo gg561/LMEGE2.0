@@ -9,26 +9,27 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import actors.Actor;
+import baseComponents.Vao;
 import collision.TerrainCollider;
 import models.Model;
+import models.TexturedModel;
 import renderer.Loader;
 import scene.Renderable;
 import textures.Texture;
 import textures.TexturePack;
 import util.Maths;
 
-public abstract class Terrain implements Renderable {
+public abstract class Terrain implements Actor {
 	
 	private static HashMap<HashMap<Integer, Integer>, Terrain> terrains = new HashMap<HashMap<Integer, Integer>, Terrain>();
 	
 	public static final int SIZE = 800;//remember to cast to float to use float division instead of int division
-	protected static final int VERTEX_COUNT = 256;
+	protected static final int VERTEX_COUNT = 128;
 	protected static final int TILES = 80;
 	
-	protected float[][]heights = new float[VERTEX_COUNT][VERTEX_COUNT];
-	
 	private Vector2f position;
-	private Model model;
+	private HeightMap heightMap;
 	private TexturePack texturePack;
 	private TerrainCollider collider;
 	
@@ -36,9 +37,22 @@ public abstract class Terrain implements Renderable {
 	public Terrain(int gridX, int gridZ, Loader loader, TexturePack texturePack) {
 		this.texturePack = texturePack;
 		this.position = new Vector2f(gridX * SIZE, gridZ * SIZE);
-		this.model = generateTerrain(loader);
+		this.heightMap = new HeightMap(VERTEX_COUNT);
+		getTerrainDataFromHeightMap(loader, this.heightMap);
+		this.heightMap.getModel().shouldRender(true);
 		terrains.put(new HashMap<Integer, Integer>(){{put(gridX, gridZ);}},  this);
 	}
+	
+	@SuppressWarnings("serial")
+	public Terrain(int gridX, int gridZ, Loader loader, TexturePack texturePack, HeightMap heightMap) {
+		this.texturePack = texturePack;
+		this.position = new Vector2f(gridX * SIZE, gridZ * SIZE);
+		this.heightMap = heightMap;
+		this.heightMap.getModel().shouldRender(true);
+		terrains.put(new HashMap<Integer, Integer>(){{put(gridX, gridZ);}},  this);
+	}
+	
+	protected abstract void getTerrainDataFromHeightMap(Loader loader, HeightMap map);
 	
 	public Matrix4f getTransformation() {
 		Matrix4f returnValue = new Matrix4f();
@@ -50,19 +64,13 @@ public abstract class Terrain implements Renderable {
 	public int getTiles() {
 		return TILES;
 	}
-	
-	protected abstract Model generateTerrain(Loader loader);
-
-	public float[][] getHeights() {
-		return heights;
-	}
 
 	public Vector2f getPosition() {
 		return position;
 	}
 
-	public Model getModel() {
-		return model;
+	public HeightMap getHeightMap() {
+		return heightMap;
 	}
 
 	public TexturePack getTextures() {
@@ -81,27 +89,7 @@ public abstract class Terrain implements Renderable {
 	public float getHeightOfTerrain(float worldX, float worldZ) {
 		float terrainX = worldX - this.position.x;//translates world coordinate to terrain coordinate -> world pos - (terrain.x * SIZE);
 		float terrainZ = worldZ - this.position.y;
-		float gridSquareSize = ((float) SIZE) / (heights.length - 1);
-		int gridX = (int) Math.floor(terrainX / gridSquareSize);
-		int gridZ = (int) Math.floor(terrainZ / gridSquareSize);
-		if(gridX >= heights.length - 1 || gridZ >= heights.length - 1 || gridX < 0 || gridZ < 0) {
-			return 0;
-		}
-		float xCoord = (terrainX % gridSquareSize) / gridSquareSize;
-		float zCoord = (terrainZ % gridSquareSize) / gridSquareSize;
-		float answer;
-		if(xCoord <= (1 - zCoord)) {
-			answer = Maths
-					.barryCentric(new Vector3f(0, heights[gridX][gridZ], 0), new Vector3f(1,
-							heights[gridX + 1][gridZ], 0), new Vector3f(0,
-							heights[gridX][gridZ + 1], 1), new Vector2f(xCoord, zCoord));
-		}else {
-			answer = Maths
-					.barryCentric(new Vector3f(1, heights[gridX + 1][gridZ], 0), new Vector3f(1,
-							heights[gridX + 1][gridZ + 1], 1), new Vector3f(0,
-							heights[gridX][gridZ + 1], 1), new Vector2f(xCoord, zCoord));
-		}
-		return answer;
+		return this.heightMap.getHeightAt(terrainX, terrainZ, SIZE);
 	}
 	
 	public void setTerrainCollider(TerrainCollider collider) {
@@ -110,6 +98,18 @@ public abstract class Terrain implements Renderable {
 	
 	public TerrainCollider getCollider() {
 		return collider;
+	}
+	
+	public TexturedModel getTexturedModel() {
+		throw new RuntimeException("This method is not supported");
+	}
+	
+	public Model getModel() {
+		return this.heightMap.getModel();
+	}
+	
+	public Vao getVao() {
+		return this.getModel().getVao();
 	}
 
 }

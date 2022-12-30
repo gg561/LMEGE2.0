@@ -19,11 +19,13 @@ public abstract class Uniform {
 		return name;
 	}
 	
-	public void storeUniformLocation(int programID) {
+	public boolean storeUniformLocation(int programID) {
 		location = GL20.glGetUniformLocation(programID, name);
 		if(location == NOT_FOUND) {
-			System.err.println("No uniform variable called " + name + " found!");
+			System.err.println("No uniform variable called " + name + " found! " + programID);
+			return false;
 		}
+		return true;
 	}
 	
 	public int getLocation() {
@@ -32,7 +34,7 @@ public abstract class Uniform {
 	
 	public static enum UniformTypes {
 		
-		FLOAT("float", UniformFloat.class), BOOLEAN("boolean", UniformBoolean.class), VEC3("vec3", UniformVector.class), VEC2("vec2", UniformVector.class), VEC4("vec4", UniformVector.class), SAMPLER("sampler2D", UniformSampler.class), MATRIX("mat4", UniformMatrix.class), 
+		FLOAT("float", UniformFloat.class), BOOLEAN("boolean", UniformBoolean.class), VEC3("vec3", UniformVector.class), VEC2("vec2", UniformVector.class), VEC4("vec4", UniformVector.class), SAMPLER("sampler2D", UniformSampler.class), SAMPLER_SHADOW("sampler2DShadow", UniformSampler.class), MATRIX("mat4", UniformMatrix.class), 
 		FLOAT_ARRAY("float[]", UniformArray.class), VEC2_ARRAY("vec2[]", UniformArray.class), VEC3_ARRAY("vec3[]", UniformArray.class), VEC4_ARRAY("vec4[]", UniformArray.class);
 		
 		private String name;
@@ -53,6 +55,15 @@ public abstract class Uniform {
 		
 		public static UniformTypes getByName(String name) {
 			return Arrays.asList(UniformTypes.values()).stream().filter(u -> u.getName().equals(name)).findFirst().get();
+		}
+		
+	}
+	
+	public static class UniformCoverCard extends Uniform {
+
+		protected UniformCoverCard(String name) {
+			super(name);
+			// TODO Auto-generated constructor stub
 		}
 		
 	}

@@ -6,8 +6,9 @@ import org.joml.Vector3f;
 import actors.Movable;
 import models.Model;
 import renderer.Loader;
+import scene.Renderable;
 
-public class Line extends Movable {
+public class Line extends Movable implements Renderable {
 	
 	private Vector3f begin;
 	private Vector3f end;
@@ -18,7 +19,7 @@ public class Line extends Movable {
 		this.begin = begin;
 		this.end = end;
 		this.color = color;
-		model = loader.loadVAO3D(new float[] {begin.x, begin.y, begin.z, end.x, end.y, end.z});
+		model = loader.loadToVAO(new float[] {begin.x, begin.y, begin.z, end.x, end.y, end.z}, 3);
 	}
 	
 	public void setBegin(Vector3f begin) {
@@ -31,7 +32,7 @@ public class Line extends Movable {
 	
 	public void resetModel(Loader loader) {
 		model.delete();
-		model = loader.loadVAO3D(new float[] {begin.x, begin.y, begin.z, end.x, end.y, end.z});
+		model = loader.loadToVAO(new float[] {begin.x, begin.y, begin.z, end.x, end.y, end.z}, 3);
 	}
 	
 	public Vector3f getBegin() {

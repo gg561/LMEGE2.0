@@ -11,7 +11,11 @@ public class TexturePack {
 	private List<Texture> textures = new ArrayList<Texture>();
 	
 	public TexturePack(Texture...textures) {
-		this.setTextures(Arrays.asList(textures));
+		this.setTextures(new ArrayList<Texture>(Arrays.asList(textures)));
+	}
+	
+	public void addTexture(Texture texture) {
+		textures.add(texture);
 	}
 
 	public List<Texture> getTextures() {
@@ -23,8 +27,12 @@ public class TexturePack {
 	}
 	
 	public void bind() {
+		bind(0);
+	}
+	
+	public void bind(int offset) {
 		for(Texture texture : textures) {
-			texture.bind(textures.indexOf(texture));
+			texture.bind(textures.indexOf(texture) + offset);
 		}
 	}
 	

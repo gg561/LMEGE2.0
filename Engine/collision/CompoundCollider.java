@@ -1,5 +1,7 @@
 package collision;
 
+import java.util.function.Predicate;
+
 import org.joml.Vector3f;
 
 import actors.Movable;
@@ -61,6 +63,24 @@ public class CompoundCollider extends Collider{
 
 	@Override
 	public Collider clone() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public void addCollision(Collider collider, Vector3f direction) {
+		
+	}
+	
+	public void collide(Collider other) {
+		
+	}
+	
+	public void reactToCollision(Predicate<Collider> pred) {
+		
+	}
+
+	@Override
+	public Vector3f containsCorner(Vector3f vector) {
 		// TODO Auto-generated method stub
 		return null;
 	}

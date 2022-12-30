@@ -1,11 +1,13 @@
 package models;
 
 import textures.Texture;
+import textures.TexturePack;
 
 public class TexturedModel {
 	
 	private Model model;
 	private Texture texture;
+	private TexturePack additionalTextures = new TexturePack();
 	private boolean useFakeLighting;
 	private int textureIndex = 0;//for texture atlas
 	
@@ -42,6 +44,14 @@ public class TexturedModel {
 
 	public void setUseFakeLighting(boolean useFakeLighting) {
 		this.useFakeLighting = useFakeLighting;
+	}
+
+	public TexturePack getAdditionalTextures() {
+		return additionalTextures;
+	}
+
+	public void setAdditionalTextures(TexturePack additionalTextures) {
+		this.additionalTextures = additionalTextures;
 	}
 
 }

@@ -1,0 +1,214 @@
+Weird Shadow Coords 
+-Happened with :
+	-EntityRenderer
+	-NormalMapRenderer
+-Reason :
+	-The *lightBiasedMatrix* was lacking in translation.
+	+The correct calculations would've been :
+	
+	LightBiasMatrix * OrthoMatrix * ViewMatrix(translated by negative Camera Position);
+	
+	=The calculation used was :
+	
+	LightBiasMatrix * OrthoMatrix * ViewMatrix;
+	
+	The ViewMatrix was not being translated according to the camera position, causing the shadow map to remain immobile in the vertex shaders' perspectives.
+	
+Last Texture Black
+-Happened with :
+	-Texture
+-Reason :
+	-The texture loading code was setting parameters for the texture before binding and drawing it, thus the parameters were funneled to the previous bound texture.
+	-The final texture would have no other texture to funnel their parameters towards, thus rendering it parameterless, and will appear black.
+	+The correct way to set a texture's parameters :
+	
+	glBindTexture(id);
+	glTexImage(...);
+	glTexParameteri(...);
+	...
+	glTexParameterf(...);
+	
+	=The employed way of setting a texture's parameters :
+	
+	glTexParameteri(...);
+	...
+	glTexParameterf(...);
+	glBindTexture(id);
+	glTexImage(...);
+	
+Incorrctly Sized Window
+-Happened with :
+	-Fbo
+	-WaterBuffers
+	-ShadowBuffers
+-Reason :
+	-The MACINTOSH laptops use Magnifiying to create the illusion of a high resolution screen, while the actual resolution is much lower.
+	-The Window size might officially be 1920x1080, but the Magnified FrameBuffer size would have been 3840x2160 or something else.
+	+The correct way to get the Real FrameBuffer size of a window :
+	
+	glGetFramebufferSize(id, width, height);
+	
+	=The employed way to get the FrameBuffer size of a window :
+	
+	glGetWindowSize(id, width, height);
+	
+	WINDOW SIZE is not FRAMEBUFFER SIZE
+	
+Shader Variables Not Being Inputted
+-Happened with :
+	-VertexShader
+	-FragmentShader
+-Reason :
+	-Every variable inside a glsl shader must be directly or indirectly related to the ultimate FragmentOutput.
+	-All that are unrelated to the FragmentOutput will be optimized and therefore destroyed.
+	+The correct way to use shader variables :
+	
+	VertexShader {
+		in vec3 normal;
+		
+		out vec3 surfaceNormal;
+		
+		surfaceNormal = normal;
+	}	
+	
+	FragmentShader {
+		in vec3 surfaceNormal;
+		
+		out vec4 outColor;
+		
+		outColor = surfaceNormal;
+	}
+	
+	=The employed way to use shader variables :
+	
+	VertexShader {
+		in vec3 normal;
+		
+		out vec3 surfaceNormal;
+		
+		surfaceNormal = vec3(1);
+	}
+	
+	FragmentShader {
+		in vec3 surfaceNormal;
+		
+		out vec4 outColor;
+		
+		outColor = surfaceNormal;
+	}
+	
+	In the correct example, the IN variable normal was connected to OUT variable surfaceNormal, which was connected to the FragmentOutput in the FragmentShader.
+	In the wrong example, however, the IN variable normal was not connected to the surfaceNormal, even though the surfaceNormal variable is connected to the FragmentOutput.
+	Since the chain has ben broken, normal will be optimized and will no longer be part of the shader code during compilation.
+	
+Mouse Picking Wrong Coordinates
+-Happened with :
+	-MousePicker
+-Reason :
+	-The Window class was mistakingly using the FrameBuffer Size for its Window Size. Even though the MACINTOSH laptop magnifies the reslution of the screen, the mouse
+	-coordinates remain untouched. Meaning that the Mouse Coordinates must come from the Window Size, and not the FrameBuffer Size, which has been magnified to keep up
+	-with the magnified resolution of the screen.
+	+The correct way to get Window Size :
+	
+	glGetWindowSize(id, width, height);
+	
+	=The employed way to get Window Size :
+	
+	glGetFramebufferSize(id, width, height);
+	
+	AGAIN, FRAMEBUFFER SIZE is not WINDOW SIZE
+	
+Stretched out Perspective 
+-Happened with :
+	-Camera
+-Reason :
+	-The JOML System requires 4 separate parameters to form a Projection Matrix :
+	-The FOV, the AspectRatio, the zNear, and the zFar
+	-The AspectRatio is a division between the Width of the window and the Height.
+	-However, if both the Width and the Height are ints, JAVA will use integer division on them, and will always return a ratio of 1,
+	-which is the same as a square AspectRatio, making a normally rectangular screen stretch out the square ratio.
+	+The correct way to calculate AspectRatio :
+	
+	1920f/1080f
+	
+	=The employed way to calculate AspectRatio :
+	
+	1920/1080
+	
+	The integer division always rounds the results down, making the aspect ratio a constant of 1. Thus 1920/1080, which would normally be 1.7777777, will be floored down to only 1.
+
+Texture distorted by Stripes
+-Happened with :
+	-Texture
+-Reason :
+	-The system used in loading a texture from an image was falty. The order was not correctly inserted.
+	+The correct way to load texture from BufferedImage :
+	
+	for(int h = 0; h < height; h++){
+		for(int w = 0; w < width; w++){
+			int pixel = pixels[h * width + w];
+			buffer.put((pixel >> 16) & 0xFF);
+			buffer.put((pixel >> 8) & 0xFF);
+			buffer.put(pixel & 0xFF);
+			buffer.put((pixel >> 24) & 0xFF);
+		}
+	}
+	
+	=The employed way to load texture from BufferedImage :
+	
+	for(int w = 0; w < width; w++){------------|__The W and H integers hav switched places here
+		for(int h = 0; h < height; h++){-------|
+			int pixel = pixels[h * width + w];
+			buffer.put((pixel >> 16) & 0xFF);
+			buffer.put((pixel >> 8) & 0xFF);
+			buffer.put(pixel & 0xFF);
+			buffer.put((pixel >> 24) & 0xFF);
+		}
+	}
+	
+	Since buffer.put automatically puts the information into the next position, this results in the for loops being detached from the order of the buffer.
+	
+	0 | 0 | 0 | 0 | 0 | 0
+	0 | 0 | 0 | 0 | 0 | 0
+	1 | 2 | 2 | 3 | 1 | 0
+	------->       - Suppose this is the order that the buffer adds info
+	
+	then
+						   ^
+	0 | 0 | 0 | 0 | 0 | 0 /|\
+	0 | 0 | 0 | 0 | 0 | 0  |     - Then this will be the order that the FOR loops read color information from
+	1 | 2 | 2 | 3 | 1 | 0  |
+	
+	Clearly, the orders don't match up. One is going from left to right, while the other is going from down to up.
+	This results in the read information being placed in the wrong position inside the buffer :
+	
+	Read :
+	
+	0 | 0 | 0 | 0 | 0 | 0 
+	0 | 0 | 0 | 0 | 0 | A  <- A is the position that is being read from : w=5 and h=1, thus WE ARE READING FROM [1 * 6 + 5] = [11]
+	0 | 0 | 0 | 0 | 0 | 0
+	
+	but the loop, by this time will have already written : 
+	
+	B | B | B | B | B | 0 
+	B | B | B | B | B | A  <- A is the position that is being read from
+	B | B | B | B | B | B  <- B are all the elements of the array that has been looped through, which total to 16 loops in total.
+	
+	This means that the Buffer will have already advanced 16 times automatically with buffer.put, 
+	thus the buffer will be writing not to [11], but to [15]
+	
+	Written :	______________ A is the position that is being written to
+				|
+			   \ /
+	0 | 0 | 0 | A | 0 | 0
+	0 | 0 | 0 | 0 | 0 | 0
+	0 | 0 | 0 | 0 | 0 | 0
+	
+	Clearly the written element is completely different from the read element, which is why the image will have color pixels floating about, 
+	as they were miscalculated during filling.
+	
+Variables inside a self-Listener keeps returning default
+	-Happened with :
+		other projcts
+	-Reason :
+		A variable inside a Function/Runnable/Consumer is actually very

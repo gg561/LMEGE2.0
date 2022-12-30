@@ -1,0 +1,76 @@
+module data a {
+	model = model("parts/car.obj");
+	texture = texture("parts/car.png");
+	texModel = texModel(model, texture);
+}
+
+module data b {
+	model = model("parts/car.obj");
+	texture = texture("parts/car.png");
+	texture.a = true;
+	texture.fl = true;
+	texture.reflectivity = 0.01;
+	texture.shineDamper = 1;
+	texModel = texModel(model, texture);
+}
+
+module data c {
+	model = model("parts/car.obj");
+	texture = texture("parts/car.png", true, true, 0.01, 1);
+}
+
+module default entities {
+	entity ent1 = entity(a.texModel);
+	entity ent2 = entity(a.texModel, vec3(0, 0, 0), vec3(0, 0, 0), 1);
+	extEntity ent3 = extEntity(a.texModel, "game/entities/Chicken.class");
+	
+}
+
+module data terrains {
+	terrain t1 = terrain(0, 0, terrainTexturePack);
+	terrain t2 = terrain(0, 1, terrainTexturePack);
+}
+
+module execute terrainTexturePack {
+	texture = texture("parts/grass.png", "parts/bricks.png", "parts/dirt.png", "parts/blendMap.png", "parts/heightmap.png");
+	return texture;
+}
+
+_f symbolizes the need to use a function reader to retrieve its returned data.
+model() : returns a model constructed with the given arguments.
+texture() : returns a texture constructed with the given arguments.
+texturedModel() : returns a texture constructed with the given arguments.
+entity() : returns an entity constructed with the given arguments.
+nentity() : returns a normalMappedEntity constructed with the given arguments.
+gui() : returns a gui with the given arguments.
+terrain() : returns a terrain with the given arguments.
+
+foreach() : runs a for each loop for a list of values and executes a command directly after it.
+push() : pushes a value into the Renderables HashMap, under a certain id given in the 2nd argument.
+
+function Renderable line (vec3 begin, vec3 end, vec3 color) {
+	return init("line.Line", begin, end, color)
+}
+
+module models {
+	public model m_house = model("path")
+}
+
+module texturedModels {
+	public texture t_house = texture("path")
+	public texturedModel tm_house = texturedModel(models.m_house, t_house)
+}
+
+module entities {
+	
+}
+
+module normalMappedEntities {
+	
+}
+
+module main {
+	foreach(entity e from entities.values) push(e, "entities")
+	foreach(normalMappedEntity n from normalMappedEntities.values) push(n, "normalMappedEntities")
+	
+}

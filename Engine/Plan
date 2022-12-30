@@ -3,18 +3,18 @@ Design Plan
 - Final Objective : Car Racing sim
 
 - Requirements :
-1. GUI + UI
+1. GUI + UI (DONE)
 2. Better Rendering
-3. Shadows
-3. Skybox
+3. Shadows (DONE)
+3. Skybox (DONE)
 4. Time
-5. Multiple Light sources
+5. Multiple Light sources (DONE)
 6. Specular Maps
 7. Animations
 8. Post Processing
 
 
-1. Shadow
+1. Shadow (DONE)
 - Shadow Mapping
 - Percentage Closer Filtering
 - Shadow Rendering
@@ -23,14 +23,14 @@ Design Plan
 - Sampling Specular Value
 - Settable Specular Maps
 
-3. Skybox
+3. Skybox (DONE)
 - Skybox blending
 
 4. Time
-- Using System time to calculate game time
+- Using System time to calculate game time 
 - Using blending factor to blend Skyboxes
 
-5. Multiple Light Sources
+5. Multiple Light Sources (DONE)
 - Factoring in multiple different light colors and powers
 - Doing lighting for all lights
 - Baking Shadow Map?
@@ -39,7 +39,7 @@ Design Plan
 - Framebuffers
 - Special Effects
 
-7. GUI + UI
+7. GUI + UI (DONE)
 - Special Text
 - Special Images
 
@@ -51,17 +51,17 @@ Design Plan
 
 Animations - standalone
 
-GUI + UI - standalone/Post processing
+GUI + UI - standalone/Post processing (DONE)
 
 Post processing - standalone
 
-Shadow - Post processing
+Shadow - standalone (DONE)
 
-Multiple Light sources - standalone
+Multiple Light sources - standalone (DONE)
 
 Specular Maps - standalone
 
-Skybox - standalone
+Skybox - standalone (DONE)
 
 Time - standalone/Skybox
 

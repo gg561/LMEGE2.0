@@ -73,10 +73,14 @@ public class Exoskeleton {
 			GLFW.glfwGetCursorPos(window, x, y);
 			float dy = (float)Math.toRadians(x[0] - cursorX[0]) * -sensitivity / 100;
 			float dx = (float)Math.toRadians(y[0] - cursorY[0]) * sensitivity / 100;
-			if(movable.getRotation().y + dy < limits.x && movable.getRotation().y + dy > limits.y)
-				movable.getRotation().add(new Vector3f(0, dy, 0));
-			if(movable.getRotation().x + dx < limits.z && movable.getRotation().x + dx > limits.w)
-				movable.getRotation().add(new Vector3f(dx, 0, 0));
+			if(limits != null) {
+				if(movable.getLocalRotation().y + dy < limits.x && movable.getLocalRotation().y + dy > limits.y)
+					movable.getLocalRotation().add(new Vector3f(0, dy, 0));
+				if(movable.getLocalRotation().x + dx < limits.z && movable.getLocalRotation().x + dx > limits.w)
+					movable.getLocalRotation().add(new Vector3f(dx, 0, 0));
+			}else {
+				movable.rotate(new Vector3f(dx, dy, 0));
+			}
 			cursorX = x;
 			cursorY = y;
 		}

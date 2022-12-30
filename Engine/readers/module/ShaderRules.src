@@ -1,0 +1,9 @@
+name_module >> 0
+open_module ->{ 2
+close_module }<< 3
+insert_module //~ 0
+var_module : 1
+insert_var_module //v 0
+end_symbol ;d 
+global_module global 1
+global_call //g 

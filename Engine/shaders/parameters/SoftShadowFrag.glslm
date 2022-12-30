@@ -1,0 +1,23 @@
+>> init global ->{
+in vec4 shadowCoords;
+in float shadowVisibility;
+uniform sampler2D depthMap;
+const float bias = 0;
+const int pcfCount = 3;
+const float mapSize = 8192;
+const float texelSize = 1 / mapSize;
+const float totalTexels = (pcfCount * 2 + 1) * (pcfCount * 2 + 1);
+}<<
+>> shadowMap ->{
+	vec3 shadowCoordsDivided = shadowCoords.xyz / shadowCoords.w;
+	float shadow = 0;
+	for(int x = -pcfCount; x <= pcfCount; x++){
+		for(int y = -pcfCount; y <= pcfCount; y++){
+			float distanceFromLight = texture(depthMap, shadowCoordsDivided.xy + vec2(x, y) * texelSize).r;
+			shadow += distanceFromLight < shadowCoordsDivided.z - bias ? 0.6 : 0;
+		}
+	}
+	shadow /= totalTexels;
+	shadow = 1 - (shadow * shadowVisibility);
+	diffuseColor *= shadow;
+}<<
